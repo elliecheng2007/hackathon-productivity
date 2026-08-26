@@ -36,7 +36,7 @@ app.post('/api/github-webhook', (req, res) => {
 app.get('/api/leaderboard', (req, res) => {
   const leaderboard = Object.keys(teams).map(teamId => {
     const data = teams[teamId];
-    const score = Math.min(100, (data.gitCommits * 10) + Math.round(data.cappedLines * 0.1));
+    const score = Math.min(100, (data.gitCommits * 1000) + Math.round(data.cappedLines * 1));
 
     return {
       teamId,
