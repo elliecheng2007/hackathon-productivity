@@ -1,6 +1,29 @@
+import requests
 import streamlit as st
+from datetime import datetime, timezone
 
-def commit_progress_score(commit_count: int, target_commits: int = 20) -> float:
-    if target_commits <= 0:
-        return 0.0
-    return min(commit_count / target_commits, 1.0)
+st.title("🚀 Progress Bar Demo")
+
+owner = st.text_input("GitHub owner", value="octocat")
+repo = st.text_input("Repo", value="Hello-World")
+target_commits = st.number_input("Target commits", min_value=1, value=10)
+
+# Calling the GitHub API
+url = f"https://api.github.com/repos/{owner}/{repo}/commits"
+response = requests.get(url, params={"per_page": 100})
+
+if response.status_code == 200:
+    commits = response.json()          # list of commit objects from GitHub
+    commit_count = len(commits)        # number of commits 
+else:
+    commit_count = 0
+    st.error(f"API call failed: {response.status_code}")
+
+
+progress_value = min(commit_count / target_commits, 1.0)
+
+st.subheader("Coding Activity")
+st.progress(progress_value, text=f"{commit_count} / {target_commits} commits")
+
+if st.button("🔄 Refresh"):
+    st.rerun()
